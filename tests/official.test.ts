@@ -1,7 +1,9 @@
 import status from "http-status";
-import {describe, expect, it, jest} from "@jest/globals";
+import {beforeEach, describe, expect, it, jest} from "@jest/globals";
 import {epDownloadChk, getAlarmCnt} from "../src/official";
 import {UserData} from "../src/types";
+
+let mockHttp: jest.Mock;
 
 describe("getAlarmCnt 단위 테스트", () => {
     const mockAlarmCnt: number = 1;
@@ -13,10 +15,12 @@ describe("getAlarmCnt 단위 테스트", () => {
         },
         methods: {}
     }
-    const mockHttp = jest.fn();
 
-    mockHttp.mockReturnValue({
+    beforeEach(() => {
+        mockHttp = jest.fn();
+        mockHttp.mockReturnValue({
         status: status.OK.toString(), errmsg: "", result: {cnt: mockAlarmCnt}
+        });
     });
 
     it("should get the correct alarm count", async () => {
@@ -29,11 +33,14 @@ describe("getAlarmCnt 단위 테스트", () => {
 
 describe("epDownloadChk 단위 테스트", () => {
     const mockCanDownloadEp: boolean = true;
-    const mockHttp = jest.fn();
-    mockHttp.mockReturnValue({
-        status: mockCanDownloadEp ? status.OK : status.TOO_MANY_REQUESTS,
-        errmsg: "",
-        code: ""
+
+    beforeEach(() => {
+        mockHttp = jest.fn();
+        mockHttp.mockReturnValue({
+            status: mockCanDownloadEp ? status.OK : status.TOO_MANY_REQUESTS,
+            errmsg: "",
+            code: ""
+        });
     });
 
     it("should get 'CAN download' response", async () => {
