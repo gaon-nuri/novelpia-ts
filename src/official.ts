@@ -1,10 +1,16 @@
 import HTTPMethod from "http-method-enum";
 import {status as HTTPStatus} from "http-status";
-import type {EpDownCheckRes, HttpRes, UserData} from "./types";
+import type {
+    EpDownCheckRes,
+    HttpEpResFn,
+    HttpFn,
+    HttpRes,
+    UserData
+} from "./types";
 
 async function getAlarmCnt(
     user: UserData,
-    http: Function,
+    http: HttpFn,
     // 테스트 의존성 주입
     mockShowAlarmDot?: Function,
     $?: any
@@ -31,7 +37,7 @@ async function getAlarmCnt(
 }
 
 async function epDownloadChk(
-    http: Function,
+    http: HttpEpResFn,
     // 테스트 의존성 주입
     mockAlertCb?: Function
 ): Promise<boolean> {
