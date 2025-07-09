@@ -1,3 +1,5 @@
+import HTTPMethod from "http-method-enum";
+import {status as HTTPStatus} from "http-status";
 import type {UserData} from "../types/alarm";
 
 async function getAlarmCnt(
@@ -10,10 +12,10 @@ async function getAlarmCnt(
 
     const url: string = "/proc/alarm";
     const data = {"mode": "getAlarmCnt"};
-    const http_result = await http("post", url, data);
+    const http_result = await http(HTTPMethod.POST, url, data);
     const {status, result} = http_result;
 
-    if (200 !== Number(status))
+    if (HTTPStatus.OK !== Number(status))
         throw new Error("status is " + status);
 
     const {cnt = 0} = result;
