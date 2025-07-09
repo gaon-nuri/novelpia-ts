@@ -1,14 +1,16 @@
 {
-  "name": "novelpia",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "typescript": "^5.5.3"
-  },
-  "private": true
+    "name": "novelpia",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "@types/jsdom": "^21.1.7",
+        "jsdom": "^26.1.0",
+        "jest-environment-jsdom": "^30.0.4",
+        "typescript": "^5.5.3"
+    },
+    "private": true
 }
