@@ -7,8 +7,8 @@
     "build": "tsc",
     "test": "jest"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/jquery": "^3.5.32",
     "ts-jest": "^29.4.0",
     "typescript": "^5.5.3"
   },
