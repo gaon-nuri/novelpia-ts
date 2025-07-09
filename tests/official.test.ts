@@ -1,4 +1,4 @@
-import {describe, expect, it} from "@jest/globals";
+import {describe, expect, it, jest} from "@jest/globals";
 import {getAlarmCnt} from "../src/official";
 import {UserData} from "../src/types";
 
@@ -12,19 +12,14 @@ describe("getAlarmCnt 단위 테스트", () => {
         },
         methods: {}
     }
+    const mockHttp = jest.fn();
 
-    function http(_type: string, _url: string, _data: {}) {
-        return {
-            status: "200",
-            errmsg: "",
-            result: {
-                cnt: mockAlarmCnt,
-            },
-        };
-    }
+    mockHttp.mockReturnValue({
+        status: "200", errmsg: "", result: {cnt: mockAlarmCnt}
+    });
 
     it("should get the correct alarm count", async () => {
-        const cnt = await getAlarmCnt(user, http, () => {
+        const cnt = await getAlarmCnt(user, mockHttp, () => {
         });
 
         expect(cnt).toBe(mockAlarmCnt);
