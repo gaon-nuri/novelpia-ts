@@ -1,3 +1,15 @@
+type HttpEpResFn = (
+    type: string,
+    url: string,
+    data: {}
+) => Promise<EpDownCheckRes>;
+
+type HttpFn = (
+    type: string,
+    url: string,
+    data: {}
+) => Promise<HttpRes>;
+
 interface Res {
     errmsg: string,
     status: number | string
@@ -26,6 +38,8 @@ type UserData = {
 
 export type {
     EpDownCheckRes,
+    HttpEpResFn,
+    HttpFn,
     HttpRes,
     UserData,
 };
