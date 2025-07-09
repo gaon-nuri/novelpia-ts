@@ -1,6 +1,6 @@
 import HTTPMethod from "http-method-enum";
 import {status as HTTPStatus} from "http-status";
-import type {EpDownCheckRes, UserData} from "./types";
+import type {EpDownCheckRes, HttpRes, UserData} from "./types";
 
 async function getAlarmCnt(
     user: UserData,
@@ -13,7 +13,7 @@ async function getAlarmCnt(
 
     const url: string = "/proc/alarm";
     const data = {"mode": "getAlarmCnt"};
-    const http_result = await http(HTTPMethod.POST, url, data);
+    const http_result: HttpRes = await http(HTTPMethod.POST, url, data);
     const {status, result} = http_result;
 
     if (HTTPStatus.OK !== Number(status))

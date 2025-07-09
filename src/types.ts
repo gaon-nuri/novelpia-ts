@@ -1,3 +1,17 @@
+interface HttpRes {
+    errmsg: string,
+    result: {
+        cnt: number
+    },
+    status: string
+}
+
+interface EpDownCheckRes {
+    code: string,
+    errmsg: string,
+    status: number
+}
+
 type UserData = {
     data: {
         mem_adt: string,
@@ -7,8 +21,8 @@ type UserData = {
     methods: {}
 };
 
-type EpDownCheckRes = {
-    "status": number, "errmsg": string, "code": string
+export type {
+    EpDownCheckRes,
+    HttpRes,
+    UserData,
 };
-
-export {UserData, EpDownCheckRes};
