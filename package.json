@@ -12,5 +12,9 @@
     "ts-jest": "^29.4.0",
     "typescript": "^5.5.3"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "http-method-enum": "^1.0.0",
+    "http-status": "^2.1.0"
+  }
 }
