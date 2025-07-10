@@ -1,8 +1,13 @@
 import status from "http-status";
 import {beforeEach, describe, expect, it, jest} from "@jest/globals";
 import {epDownloadChk, getAlarmCnt} from "../src/official";
-import type {HttpEpResFn, HttpFn} from "../src/types"
-import {UserData} from "../src/types";
+import type {
+    EpDownCheckRes,
+    HttpEpResFn,
+    HttpFn,
+    HttpRes,
+    UserData
+} from "../src/types"
 
 describe("getAlarmCnt 단위 테스트", () => {
     const mockAlarmCnt: number = 1;
@@ -15,16 +20,22 @@ describe("getAlarmCnt 단위 테스트", () => {
         methods: {}
     }
 
-    let mockHttp: jest.Mock<HttpFn>;
+    type MockHttp = jest.Mock<HttpFn>;
+
+    const setMockHttpRetVal = (fn: MockHttp, res: HttpRes) => {
+        fn.mockReturnValue(Promise.resolve(res));
+    };
+
+    let mockHttp: MockHttp;
     let mockCb: jest.Mock;
 
     beforeEach(() => {
         mockHttp = jest.fn();
-        mockHttp.mockReturnValue(Promise.resolve({
+        setMockHttpRetVal(mockHttp, {
             status: status.OK.toString(),
             errmsg: "",
             result: {cnt: mockAlarmCnt}
-        }));
+        });
         mockCb = jest.fn();
     });
 
@@ -39,15 +50,21 @@ describe("getAlarmCnt 단위 테스트", () => {
 describe("epDownloadChk 단위 테스트", () => {
     const mockCanDownloadEp: boolean = true;
 
-    let mockHttp: jest.Mock<HttpEpResFn>;
+    type MockHttp = jest.Mock<HttpEpResFn>;
+
+    const setMockHttpRetVal = (fn: MockHttp, res: EpDownCheckRes) => {
+        fn.mockReturnValue(Promise.resolve(res));
+    };
+
+    let mockHttp: MockHttp;
 
     beforeEach(() => {
         mockHttp = jest.fn();
-        mockHttp.mockReturnValue(Promise.resolve({
+        setMockHttpRetVal(mockHttp, {
             status: mockCanDownloadEp ? status.OK : status.TOO_MANY_REQUESTS,
             errmsg: "",
             code: ""
-        }));
+        });
     });
 
     it("should get 'CAN download' response", async () => {
