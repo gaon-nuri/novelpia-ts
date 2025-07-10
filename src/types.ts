@@ -10,6 +10,12 @@ type HttpFn = (
     data: {}
 ) => Promise<HttpRes>;
 
+type HttpStrFn = (
+    type: string,
+    url: string,
+    data: {}
+) => Promise<string>;
+
 interface Res {
     errmsg: string,
     status: number | string
@@ -36,10 +42,22 @@ type UserData = {
     methods: {}
 };
 
+interface SuccCbs {
+    loginCallback: Function,
+}
+
+interface ToggleStateCbs extends SuccCbs {
+    authCallback: Function,
+    offCallback: Function,
+    onCallback: Function
+}
+
 export type {
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
+    HttpStrFn,
     HttpRes,
-    UserData,
+    ToggleStateCbs,
+    UserData
 };
