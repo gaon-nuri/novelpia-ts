@@ -45,6 +45,39 @@ describe("getAlarmCnt 단위 테스트", () => {
         expect(cnt).toBe(mockAlarmCnt);
         expect(mockCb).toHaveBeenCalledTimes(1);
     });
+
+    it("should fail to get an invalid user's correct alarm count", async () => {
+        const invalidUser: UserData = {
+            data: {
+                mem_adt: "1",
+                mem_birthday: new Date().toISOString().slice(0, 10),
+                mem_no: "0"
+            },
+            methods: {}
+        };
+
+        await expect(
+            getAlarmCnt(invalidUser, mockHttp, mockCb)
+        ).rejects.toThrow("Member not found");
+
+        expect(mockHttp).not.toHaveBeenCalled();
+        expect(mockCb).not.toHaveBeenCalled();
+    });
+
+    it("should fail to get an alarm count on HTTP status error", async () => {
+        setMockHttpRetVal(mockHttp, {
+            status: status.IM_A_TEAPOT.toString(),
+            errmsg: "",
+            result: {cnt: mockAlarmCnt}
+        });
+
+        await expect(
+            getAlarmCnt(user, mockHttp, mockCb)
+        ).rejects.toThrow(`status is ${status.IM_A_TEAPOT}`);
+
+        expect(mockHttp).toHaveBeenCalledTimes(1);
+        expect(mockCb).not.toHaveBeenCalled();
+    });
 });
 
 describe("epDownloadChk 단위 테스트", () => {
@@ -68,22 +101,28 @@ describe("epDownloadChk 단위 테스트", () => {
     });
 
     it("should get 'CAN download' response", async () => {
+        setMockHttpRetVal(mockHttp, {
+            code: "", errmsg: "", status: status.OK
+        });
+
         await expect(epDownloadChk(mockHttp)).resolves.toBe(true);
     });
 
-    it(
-        "should get 'can NOT download' response due to too many reqeusts",
+    it("should get 'can NOT download' response due to too many reqeusts",
         async () => {
-            mockHttp.mockReturnValue(Promise.resolve({
-                status: status.TOO_MANY_REQUESTS, errmsg: "", code: ""
-            }));
+            setMockHttpRetVal(mockHttp, {
+                code: "", errmsg: "", status: status.TOO_MANY_REQUESTS
+            });
             const errMsg = `HTTP ${status.TOO_MANY_REQUESTS} 오류`;
             const failCb = jest.fn(() => {
                 throw new Error(errMsg);
             });
 
-            await expect(epDownloadChk(mockHttp, failCb)).rejects.toThrow(errMsg);
+            await expect(
+                epDownloadChk(mockHttp, failCb)
+            ).rejects.toThrow(errMsg);
 
             expect(failCb).toHaveBeenCalledTimes(1);
-    });
+        }
+    );
 })
