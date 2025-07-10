@@ -16,6 +16,7 @@ describe("getAlarmCnt 단위 테스트", () => {
     }
 
     let mockHttp: jest.Mock<HttpFn>;
+    let mockCb: jest.Mock;
 
     beforeEach(() => {
         mockHttp = jest.fn();
@@ -24,13 +25,14 @@ describe("getAlarmCnt 단위 테스트", () => {
             errmsg: "",
             result: {cnt: mockAlarmCnt}
         }));
+        mockCb = jest.fn();
     });
 
     it("should get the correct alarm count", async () => {
-        const cnt = await getAlarmCnt(user, mockHttp, () => {
-        });
+        const cnt = await getAlarmCnt(user, mockHttp, mockCb);
 
         expect(cnt).toBe(mockAlarmCnt);
+        expect(mockCb).toHaveBeenCalledTimes(1);
     });
 });
 
