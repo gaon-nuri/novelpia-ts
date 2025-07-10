@@ -7,4 +7,8 @@ type UserData = {
     methods: {}
 };
 
-export {UserData};
+type EpDownCheckRes = {
+    "status": number, "errmsg": string, "code": string
+};
+
+export {UserData, EpDownCheckRes};
