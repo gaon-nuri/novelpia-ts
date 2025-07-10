@@ -1,6 +1,7 @@
 import HTTPMethod from "http-method-enum";
 import {status as HTTPStatus} from "http-status";
 import type {
+    AlarmDelCbs,
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
@@ -36,6 +37,52 @@ async function getAlarmCnt(
     })();
 
     return cnt;
+}
+
+async function alarmAllDel(
+    csrf: string,
+    http: HttpStrFn,
+    // 테스트 의존성 주입
+    mockAlarmDelCbs?: AlarmDelCbs
+) {
+    const type = HTTPMethod.POST;
+    const url = "/proc/alarm_all_del";
+    const data = {csrf: csrf};
+    const httpRes: string = await http(type, url, data);
+
+    function succCb(
+        httpRes: string,
+        // 테스트 의존성 주입
+        mockAlarmDelCb?: AlarmDelCbs
+    ) {
+        const fallbackOkCb = () => {
+            alert("모든 알람이 삭제되었습니다");
+            location.reload();
+        };
+
+        const fallbackLoginCb = () => {
+            const question = "로그인이 해제된 것 같습니다.\n로그인을 하시겠습니까?";
+            if (confirm(question)) location.assign("/page/login");
+        };
+
+        switch (httpRes) {
+            case "OK":
+                mockAlarmDelCb
+                    ? mockAlarmDelCb.okCallback()
+                    : fallbackOkCb();
+                break;
+            case "login":
+                mockAlarmDelCb
+                    ? mockAlarmDelCb.loginCallback()
+                    : fallbackLoginCb();
+                break;
+            default:
+                throw new Error("오류가 발생하였습니다.");
+        }
+    }
+
+    succCb(httpRes, mockAlarmDelCbs);
+
 }
 
 async function epDownloadChk(
@@ -86,5 +133,5 @@ async function pickBtn(
 }
 
 export {
-    getAlarmCnt, epDownloadChk, pickBtn
+    getAlarmCnt, alarmAllDel, epDownloadChk, pickBtn
 };
