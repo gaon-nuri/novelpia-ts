@@ -1,11 +1,12 @@
 import status from "http-status";
 import {beforeEach, describe, expect, it, jest} from "@jest/globals";
-import {epDownloadChk, getAlarmCnt} from "../src/official";
+import {epDownloadChk, getAlarmCnt, pickBtn} from "../src/official";
 import type {
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
     HttpRes,
+    ToggleStateCbs,
     UserData
 } from "../src/types"
 
@@ -126,3 +127,122 @@ describe("epDownloadChk 단위 테스트", () => {
         }
     );
 })
+
+describe("pickBtn 단위 테스트", () => {
+    const novelNo = 127306;
+    const encode = (res: {
+        isPicked: boolean, rank: string, opt: string
+    }) => res.isPicked ? "off" : "on" + "|" + res.rank + "|" + res.opt;
+
+    let mockHttp: jest.Mock<(
+        type: string, url: string, data: {}
+    ) => Promise<string>>;
+    let mockOnCb: jest.Mock;
+    let mockOffCb: jest.Mock;
+    let mockLoginCb: jest.Mock;
+    let mockAuthCb: jest.Mock;
+    let toggleState: (data: string, _cbs: ToggleStateCbs) => void;
+
+    beforeEach(() => {
+        mockHttp = jest.fn();
+        mockOnCb = jest.fn(() => console.info("인생픽이 등록되었습니다."));
+        mockOffCb = jest.fn(() => console.warn("인생픽이 해제되었습니다."));
+        mockLoginCb = jest.fn(() => {
+            console.warn("인생픽 등록을 위해서는 로그인이 필요합니다.\n로그인 하시겠습니까?");
+            console.info("logined");
+        });
+        mockAuthCb = jest.fn(() => {
+            console.warn("인생픽 등록을 위해서는 본인인증이 필요합니다.\n본인인증 하시겠습니까?");
+            console.info("redirected to /page/age_auth");
+        });
+
+        toggleState = (data: string, _: ToggleStateCbs) => toggleSuccCb(data, {
+            onCallback: mockOnCb,
+            offCallback: mockOffCb,
+            authCallback: mockAuthCb,
+            loginCallback: mockLoginCb
+        });
+    });
+
+    function toggleSuccCb(data: string, callbacks: ToggleStateCbs) {
+        const check = data.split("|");
+        switch (check[0]) {
+            case "on":
+                callbacks.onCallback();
+                break;
+            case "off":
+                callbacks.offCallback();
+                break;
+            case "login":
+                callbacks.loginCallback();
+                break;
+            case "auth":
+                callbacks.authCallback();
+                break;
+            default:
+                throw new Error("알 수 없는 오류 발생");
+        }
+    }
+
+    it("should succeed to 'pick' novel", async () => {
+        mockHttp.mockReturnValueOnce(Promise.resolve(encode({
+            isPicked: false, rank: "공개전", opt: ""
+        })));
+
+        await pickBtn(process.env.CSRF!, novelNo, mockHttp, toggleState);
+
+        [mockHttp, mockOnCb].forEach(cb => {
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+
+        [mockOffCb, mockLoginCb, mockAuthCb].forEach(cb => {
+            expect(cb).not.toHaveBeenCalled();
+        });
+    });
+
+    it("should fail to 'pick' novel due to undone login", async () => {
+        mockHttp.mockReturnValueOnce(Promise.resolve("login|"));
+
+            await pickBtn(process.env.CSRF!, novelNo, mockHttp, toggleState);
+
+        [mockHttp, mockLoginCb].forEach(cb => {
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+        [mockOnCb, mockOffCb, mockAuthCb]
+            .forEach(cb => {
+                expect(cb).not.toHaveBeenCalled();
+            });
+    });
+
+    it("should fail to 'pick' novel due to undone authentication",
+        async () => {
+            mockHttp.mockReturnValueOnce(Promise.resolve("auth|"));
+
+            await pickBtn(process.env.CSRF!, novelNo, mockHttp, toggleState);
+
+            [mockHttp, mockAuthCb].forEach(cb => {
+                expect(cb).toHaveBeenCalledTimes(1);
+            });
+
+            [mockOnCb, mockOffCb, mockLoginCb].forEach(cb => {
+                expect(cb).not.toHaveBeenCalled();
+            });
+        }
+    );
+
+    it("should fail to 'pick' novel due to unknown error",
+        () => {
+            mockHttp.mockReturnValueOnce(Promise.resolve("unknown|"));
+
+            expect(() =>
+                pickBtn(process.env.CSRF!, novelNo, mockHttp, toggleState)
+            ).rejects.toThrow("알 수 없는 오류 발생");
+
+            expect(mockHttp).toHaveBeenCalledTimes(1);
+
+            [mockOnCb, mockOffCb, mockLoginCb, mockAuthCb].forEach(cb => {
+                expect(cb).not.toHaveBeenCalled();
+            });
+        }
+    );
+});
