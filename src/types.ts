@@ -1,14 +1,17 @@
-interface HttpRes {
+interface Res {
     errmsg: string,
+    status: number | string
+}
+
+interface HttpRes extends Res {
     result: {
         cnt: number
     },
     status: string
 }
 
-interface EpDownCheckRes {
+interface EpDownCheckRes extends Res {
     code: string,
-    errmsg: string,
     status: number
 }
 
