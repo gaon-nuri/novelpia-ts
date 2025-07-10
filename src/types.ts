@@ -52,7 +52,12 @@ interface ToggleStateCbs extends SuccCbs {
     onCallback: Function
 }
 
+interface AlarmDelCbs extends SuccCbs {
+    okCallback: Function,
+}
+
 export type {
+    AlarmDelCbs,
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,

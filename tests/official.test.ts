@@ -1,11 +1,18 @@
 import status from "http-status";
 import {beforeEach, describe, expect, it, jest} from "@jest/globals";
-import {epDownloadChk, getAlarmCnt, pickBtn} from "../src/official";
+import {
+    alarmAllDel,
+    epDownloadChk,
+    getAlarmCnt,
+    pickBtn
+} from "../src/official";
 import type {
+    AlarmDelCbs,
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
     HttpRes,
+    HttpStrFn,
     ToggleStateCbs,
     UserData
 } from "../src/types"
@@ -78,6 +85,56 @@ describe("getAlarmCnt 단위 테스트", () => {
 
         expect(mockHttp).toHaveBeenCalledTimes(1);
         expect(mockCb).not.toHaveBeenCalled();
+    });
+});
+
+describe("alarmAllDel 단위 테스트", () => {
+    type MockHttpStr = jest.Mock<HttpStrFn>;
+
+    let mockHttp: MockHttpStr;
+    let mockOkCb: jest.Mock;
+    let mockLoginCb: jest.Mock;
+    let alarmDelCbs: AlarmDelCbs;
+    let alarmAllDelBinded: Function;
+
+    beforeEach(() => {
+        mockHttp = jest.fn();
+        mockOkCb = jest.fn(() => {
+            console.info("모든 알람이 삭제되었습니다");
+            console.info("page reloaded");
+        });
+        mockLoginCb = jest.fn(() => {
+            console.warn("로그인이 해제 된 것 같습니다.\n로그인 하시겠습니까?");
+            console.info("redirect to /page/login");
+        });
+        alarmDelCbs = {
+            okCallback: mockOkCb,
+            loginCallback: mockLoginCb
+        };
+        alarmAllDelBinded = () =>
+            alarmAllDel(process.env.CSRF!, mockHttp, alarmDelCbs);
+    });
+
+    it("should succeed to delete all alarms", async () => {
+        mockHttp.mockReturnValueOnce(Promise.resolve("OK"));
+
+        await alarmAllDelBinded();
+
+        [mockHttp, mockOkCb].forEach(cb => expect(cb).toHaveBeenCalledTimes(1));
+
+        expect(mockLoginCb).not.toHaveBeenCalled();
+    });
+
+    it("should fail to delete any alarm due to undone login", async () => {
+        mockHttp.mockReturnValueOnce(Promise.resolve("login"))
+
+        await alarmAllDelBinded();
+
+        [mockHttp, mockLoginCb].forEach(cb => {
+            expect(cb).toHaveBeenCalledTimes(1);
+        });
+
+        expect(mockOkCb).not.toHaveBeenCalled();
     });
 });
 
