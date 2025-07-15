@@ -8,7 +8,6 @@ import {
 } from "../src/official/official.main";
 import type {
     AlarmDelCbs,
-    EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
     HttpRes,
@@ -139,38 +138,25 @@ describe("alarmAllDel 단위 테스트", () => {
 });
 
 describe("epDownloadChk 단위 테스트", () => {
-    const mockCanDownloadEp: boolean = true;
-
-    type MockHttp = jest.Mock<HttpEpResFn>;
-
-    const setMockHttpRetVal = (fn: MockHttp, res: EpDownCheckRes) => {
-        fn.mockReturnValue(Promise.resolve(res));
-    };
-
-    let mockHttp: MockHttp;
+    let mockHttp: jest.Mock<HttpEpResFn>;
 
     beforeEach(() => {
         mockHttp = jest.fn();
-        setMockHttpRetVal(mockHttp, {
-            status: mockCanDownloadEp ? status.OK : status.TOO_MANY_REQUESTS,
-            errmsg: "",
-            code: ""
-        });
     });
 
     it("should get 'CAN download' response", async () => {
-        setMockHttpRetVal(mockHttp, {
+        mockHttp.mockReturnValueOnce(Promise.resolve({
             code: "", errmsg: "", status: status.OK
-        });
+        }));
 
         await expect(epDownloadChk(mockHttp)).resolves.toBe(true);
     });
 
     it("should get 'can NOT download' response due to too many reqeusts",
         async () => {
-            setMockHttpRetVal(mockHttp, {
+            mockHttp.mockReturnValueOnce(Promise.resolve({
                 code: "", errmsg: "", status: status.TOO_MANY_REQUESTS
-            });
+            }));
             const errMsg = `HTTP ${status.TOO_MANY_REQUESTS} 오류`;
             const failCb = jest.fn(() => {
                 throw new Error(errMsg);
@@ -262,14 +248,14 @@ describe("pickBtn 단위 테스트", () => {
 
             await pickBtn(process.env.CSRF!, novelNo, mockHttp, toggleState);
 
-        [mockHttp, mockLoginCb].forEach(cb => {
-            expect(cb).toHaveBeenCalledTimes(1);
-        });
-        [mockOnCb, mockOffCb, mockAuthCb]
-            .forEach(cb => {
+            [mockHttp, mockLoginCb].forEach(cb => {
+                expect(cb).toHaveBeenCalledTimes(1);
+            });
+            [mockOnCb, mockOffCb, mockAuthCb].forEach(cb => {
                 expect(cb).not.toHaveBeenCalled();
             });
-    });
+        }
+    );
 
     it("should fail to 'pick' novel due to undone authentication",
         async () => {
