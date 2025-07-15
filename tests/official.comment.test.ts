@@ -1,6 +1,7 @@
 import status from "http-status";
 import {beforeEach, describe, expect, jest, test} from "@jest/globals";
 import {getCmtInWriter} from "../src/official/official.comment";
+import {partialApply} from "../src/utils/utils";
 import type {HttpFnWithDataType, HttpRes} from "../src/types/type.main";
 
 describe("getCmtInWriter 단위 테스트", () => {
@@ -14,11 +15,18 @@ describe("getCmtInWriter 단위 테스트", () => {
 
     let mockHttp: jest.Mock<HttpFnWithDataType>;
     let mockGetUserCmt: jest.Mock;
+    let getCmtOfWriter: Function;
     let mockCount: number;
 
     beforeEach(() => {
         mockHttp = jest.fn();
         mockGetUserCmt = jest.fn();
+        getCmtOfWriter = partialApply(
+            getCmtInWriter,
+            mockWriterNo,
+            mockHttp,
+            mockGetUserCmt
+        );
     });
 
     describe("댓글 無", () => {
@@ -32,11 +40,7 @@ describe("getCmtInWriter 단위 테스트", () => {
         })
 
         test("어떤 콜백도 無", async () => {
-            await getCmtInWriter(
-                mockWriterNo,
-                mockHttp,
-                mockGetUserCmt
-            );
+            await getCmtOfWriter();
 
             [
                 mockHttp,
@@ -59,12 +63,7 @@ describe("getCmtInWriter 단위 테스트", () => {
             });
 
             test("성공 콜백 有", async () => {
-                await getCmtInWriter(
-                    mockWriterNo,
-                    mockHttp,
-                    mockGetUserCmt,
-                    mockSuccCb
-                );
+                await getCmtOfWriter(mockSuccCb);
 
                 [
                     mockHttp,
@@ -91,11 +90,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                     result: {cnt: mockCount}
                 });
 
-                await getCmtInWriter(
-                    mockWriterNo,
-                    mockHttp,
-                    mockGetUserCmt
-                );
+                await getCmtOfWriter();
 
                 [
                     mockHttp,
@@ -126,12 +121,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                         result: {cnt: mockCount}
                     });
 
-                    await getCmtInWriter(
-                        mockWriterNo,
-                        mockHttp,
-                        mockGetUserCmt,
-                        mockSuccCb
-                    );
+                    await getCmtOfWriter(mockSuccCb);
 
                     [
                         mockHttp,
@@ -147,11 +137,17 @@ describe("getCmtInWriter 단위 테스트", () => {
         describe("성공 콜백 無", () => {
             describe("로그인 콜백 有", () => {
                 let mockLoginCb: jest.Mock;
+                let getCmtOfWriterWithLoginCb: Function;
 
                 beforeEach(() => {
                     mockLoginCb = jest.fn(() => {
                         console.info("Logined");
                     });
+                    getCmtOfWriterWithLoginCb = partialApply(
+                        getCmtOfWriter,
+                        undefined,
+                        mockLoginCb
+                    );
                 });
 
                 describe("HTTP 콜백 無", () => {
@@ -162,13 +158,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                             result: {cnt: mockCount}
                         });
 
-                        await getCmtInWriter(
-                            mockWriterNo,
-                            mockHttp,
-                            mockGetUserCmt,
-                            undefined,
-                            mockLoginCb
-                        );
+                        await getCmtOfWriterWithLoginCb();
 
                         [
                             mockHttp,
@@ -187,13 +177,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                             result: {cnt: mockCount}
                         });
 
-                        await getCmtInWriter(
-                            mockWriterNo,
-                            mockHttp,
-                            mockGetUserCmt,
-                            undefined,
-                            mockLoginCb
-                        );
+                        await getCmtOfWriterWithLoginCb();
 
                         [
                             mockHttp,
@@ -221,12 +205,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                             result: {cnt: mockCount}
                         });
 
-                        await getCmtInWriter(
-                            mockWriterNo,
-                            mockHttp,
-                            mockGetUserCmt,
-                            undefined,
-                            mockLoginCb,
+                        await getCmtOfWriterWithLoginCb(
                             undefined,
                             mockHttpFbCb
                         );
@@ -242,11 +221,19 @@ describe("getCmtInWriter 단위 테스트", () => {
             describe("로그인 콜백 無", () => {
                 describe("HTTP 콜백 有", () => {
                     let mockHttpFbCb: jest.Mock<(res: HttpRes) => void>;
+                    let getCmtOfWriterWithHTTPFbCb: Function;
 
                     beforeEach(() => {
                         mockHttpFbCb = jest.fn((res: HttpRes) => {
                             console.info(res.status);
                         });
+                        getCmtOfWriterWithHTTPFbCb = partialApply(
+                            getCmtOfWriter,
+                            undefined,
+                            undefined,
+                            undefined,
+                            mockHttpFbCb
+                        );
                     });
 
                     test("HTTP 200", async () => {
@@ -258,15 +245,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                             }
                         });
 
-                        await getCmtInWriter(
-                            mockWriterNo,
-                            mockHttp,
-                            mockGetUserCmt,
-                            undefined,
-                            undefined,
-                            undefined,
-                            mockHttpFbCb
-                        );
+                        await getCmtOfWriterWithHTTPFbCb();
 
                         [
                             mockHttp,
@@ -285,15 +264,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                             result: {cnt: mockCount}
                         });
 
-                        await getCmtInWriter(
-                            mockWriterNo,
-                            mockHttp,
-                            mockGetUserCmt,
-                            undefined,
-                            undefined,
-                            undefined,
-                            mockHttpFbCb
-                        );
+                        await getCmtOfWriterWithHTTPFbCb();
 
                         [
                             mockHttp,
