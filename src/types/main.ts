@@ -10,6 +10,13 @@ type HttpFn = (
     data: {}
 ) => Promise<HttpRes>;
 
+type HttpFnWithDataType = (
+    type: string,
+    url: string,
+    data: {},
+    dataType: string
+) => Promise<HttpRes>;
+
 type HttpStrFn = (
     type: string,
     url: string,
@@ -61,6 +68,7 @@ export type {
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
+    HttpFnWithDataType,
     HttpStrFn,
     HttpRes,
     ToggleStateCbs,
