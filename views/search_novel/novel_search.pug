@@ -1,0 +1,75 @@
+//- Parameters
+//- novelThumb, novelName, writerNick, isParodyStr, novelNo
+
+//- This code snippet is used to display a novel search result in a card format
+//- with an image, title, author, and a button to select the novel.
+
+//- The styles are inline for simplicity,
+//- but can be moved to a CSS file for better maintainability.
+
+//- The button has a data attr for the novel number to handle selection in JS.
+
+//- The structure is designed to be responsive and visually appealing,
+//- with a flexbox layout for the card.
+
+//- The text is truncated with ellipsis for long titles and author names
+//- to maintain a clean layout.
+
+div(style={display: flex, gap: "15px", marginBottom: "20px"})
+    img(src=novelThumb, alt=novelName, title=novelName, style={
+        flex: 1,
+        maxWidth: "80px",
+        minWidth: "0"
+    })
+    div(style={
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minWidth: "0"
+    })
+        div
+            p(
+                title=novelName,
+                style={
+                    WebkitBoxOrient: "vertical",
+                    WebkitLineClamp: 2,
+                    color: "black",
+                    display: "-webkit-box",
+                    fontSize: "15px",
+                    fontWeight: 500,
+                    lineHeight: "1.3",
+                    overflow: "hidden",
+                    textAlign: "left",
+                    textOverflow: "ellipsis", //- Text truncated with ellipsis
+                    whiteSpace: "normal",
+                    wordWrap: "break-word"
+                })=novelName
+            p(
+                title=writerNick
+                style={
+                    color: "gray(102)",
+                    fontSize: "13px",
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis", //- Text truncated with ellipsis
+                    whiteSpace: "nowrap"
+                },
+            )=writerNick
+            p.is_second_allow(style={
+                color: "#4B7CAE",
+                fontSize: "12px"
+            })=isParodyStr
+        button.novel_select_btn(
+            data-novel_no=novelNo,
+            style={
+                backgroundColor: "white",
+                borderColor: "gray(221)",
+                color: "gray(102)",
+                cursor: "pointer",
+                fontSize: "12px",
+                maxWidth: "80px",
+                padding: "6px 15px 6px 15px"
+            }
+        ) 선택하기
