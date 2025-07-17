@@ -1,0 +1,10 @@
+//- Parameters
+//- genre_search_history_arr
+
+each item, idx in genre_search_history_arr
+    li
+        a.user_search_tag(data-tag=item)=item
+        div(style={display: "inline-block", float: "right"})
+            span.genre_fix(id=`fix_genre_${idx}`)
+            span.genre_tag_del(data-i=idx)
+                i.icon.ion-trash-a(style="font-size:20px; line-height: 20px;")

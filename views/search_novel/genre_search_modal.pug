@@ -1,0 +1,20 @@
+.basic-modal-background#genre_search_modal
+    .basic-modal-wrapper
+        .basic-modal-top
+            .tab_search_tit 태그 검색
+            .basic-modal-close
+        .tag_contents
+            input#genre_search.tag_search_box(
+                type="text",
+                value="",
+                placeholder="검색할 태그를 입력해주세요."
+            )
+            h6 최근 검색 목록
+            .history_box
+                ul#genre_search_history
+            .history_box.tag_no_pia#no_genre_search_history
+                img(src=`${G_CDN_DOMAIN_IMG}/img/new/list/img_tag_x.png`)
+                | 최근 검색 기록이 없습니다.
+            .tab_search_footer
+                button#genre_search_btn.tag_search(type="button") 검색
+                button#genre_search_modal_close_btn.pop_close(type="button") 닫기
