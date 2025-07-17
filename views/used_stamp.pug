@@ -1,25 +1,7 @@
 .hold-stamp-wrapper
-    .user-card-top
-        h4 보유 중인 로얄티콘
-        button.top-setting-btn(type="button") 로얄티콘 관리
+    +userCardTop("보유 중인 로얄티콘", "로얄티콘 관리")
     .user-section
         .hold-emo-rank.rank-wrapper
-            img.s_inv(
-                src = G_CDN_DOMAIN_IMG +
-                "/img/new/user_profile/rank_medal_icon.png"
-            )
-            .user-rank
-                p 로얄티콘 보유랭킹
-                div -
-            .deco-bar
-            .hold-item-num
-                p 전체 보유 로얄티콘
-                div -
+            +rank("로얄티콘 보유", "보유 로얄티콘")
         .get-emo-num
-            .get-emo-wrapper
-                img.s_inv(
-                    src=`${G_CDN_DOMAIN_IMG}/img/new/icon/emt_novel1.png`,
-                    alt=""
-                )
-                p 로얄티콘
-                p -
+            +getEmoWrapper("emt_novel1", "로얄티콘")

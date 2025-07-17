@@ -4,11 +4,8 @@
         .prefer-canvas
             canvas#canvas
         .prefer-tags
-            span #코디미
-            span #현대
-            span #라이트노벨
-            span #TS
-            span #착각
+            each preferTag in ["#코미디", "#현대", "#라이트노벨", "#TS", "#착각"]
+                span=preferTag
     |
     .prefer-lists
         h4 선호하는 소설
@@ -24,14 +21,14 @@
                 li 걸어서 소설속으로
                 li 걸어서 소설속으로
     |
+    - cnt = 2
     .prefer-page
         //- Pagination example
 
             a.first-page(href='')
-                img(src='${G_CDN_DOMAIN_IMG}/img/new/user_profile/left.png')
+                img(src='#{profilePath}/left.png')
             a.selected(href='javascript:;') 1
-            a(href='javascript:;') 2
-            a(href='javascript:;') 3
-            a(href='javascript:;') 4
+            while cnt < 5
+                a(href='javascript:;')=cnt++
             a.last-page(href='')
-                img(src='${G_CDN_DOMAIN_IMG}/img/new/user_profile/right.png')
+                img(src='#{profilePath}/right.png')

@@ -4,15 +4,12 @@ div(style="margin-top:16px;")
 .list-tit.s_inv
     p 연재 중인 소설
         span (-)
-    a(href="/writer-room" class="btn-writer-room") 작품관리
+    a.btn-writer-room(href="/writer-room") 작품 관리
 |
 .novel-list-wp.s-inv
     .novel-empty
-        img(
-            class="s_inv",
-            src="${G_CDN_DOMAIN_IMG}/img/new/user_profile/img_piaz.png"
-        )
-        p 연재중인 소설이 없습니다.
-        a(href="/publishing/new" class="btn-publishing") 글쓰고 부자되기
+        img.s_inv(src=imgPiazSrc)
+        p 연재 중인 소설이 없습니다.
+        a.btn-publishing(href="/publishing/new") 글 쓰고 부자되기
 |
 .pagination.s_inv

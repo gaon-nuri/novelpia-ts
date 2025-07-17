@@ -6,24 +6,8 @@
             .hold-item-num(style="width:100%")
                 p 전체 누적 읽은 회차 수
                 div -
+        - cnt = 1
         .get-keep-imgs.s_inv
-            img(
-                src=`${G_CDN_DOMAIN_IMG}/img/new/icon/episode_cnt_01.png`,
-                alt=""
-            )
-            img(
-                src=`${G_CDN_DOMAIN_IMG}/img/new/icon/episode_cnt_02.png`,
-                alt=""
-            )
-            img(
-                src=`${G_CDN_DOMAIN_IMG}/img/new/icon/episode_cnt_03.png`,
-                alt=""
-            )
-            img(
-                src=`${G_CDN_DOMAIN_IMG}/img/new/icon/episode_cnt_04.png`,
-                alt=""
-            )
-            img(
-                src=`${G_CDN_DOMAIN_IMG}/img/new/icon/episode_cnt_05.gif`,
-                alt=""
-            )
+            while cnt < 5
+                img(src=`${iconSrc}/episode_cnt_0${cnt++}.png` alt="")
+            img(src=`${iconSrc}/episode_cnt_05.gif` alt="")

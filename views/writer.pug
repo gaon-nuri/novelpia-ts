@@ -1,12 +1,15 @@
 - G_CDN_DOMAIN_IMG = "//images.novelpia.com";
-.writer-wrapper
-    .user-card-top
-        h4 연재중인 소설
-        button.top-setting-btn(type="button") 연재소설
+- newImgPath = `${G_CDN_DOMAIN_IMG}/img/new`;
+- profilePath = `${newImgPath}/user_profile`;
+- imgPiazSrc = `${profilePath}/img_piaz.png`;
 
+.writer-wrapper
+    mixin userCardTop(heading, btnName)
+        .user-card-top
+            h4=heading
+            button.top-setting-btn(type="button")=btnName
+    +userCardTop("연재 중인 소설", "연재 소설")
     .user-section
         .novel-empty
-            img.s_inv(
-                src=`#{G_CDN_DOMAIN_IMG}/img/new/user_profile/img_piaz.png`
-            )
-            p 연재중인 소설이 없습니다.
+            img.s_inv(src=imgPiazSrc)
+            p 연재 중인 소설이 없습니다.

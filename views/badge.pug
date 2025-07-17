@@ -1,25 +1,24 @@
+- iconSrc = newImgPath + "/icon";
+
 .user-badge
-    .user-card-top
-        h4 보유중인 뱃지
-        button.top-setting-btn(type='button') 뱃지설정
+    +userCardTop("보유 중인 배지", "배지 설정")
     .user-section
         .badge-graph-wrapper
             .hold-badge-wrapper.num-wrapper
-                span.hold-num 0
-                span.max-num /0
+                mixin numWrapper
+                    span.hold-num 0
+                    span.max-num /0
             .badge-graph.graph-wrapper
-                .graph-num 0%
-                .bar-back
-                    .bar-front
+                mixin graphWrapper
+                    .graph-num 0%
+                    .bar-back
+                        .bar-front
         .badge-wrapper
-        //-
-            .badge-item
-                img.s_inv(
-                    src=`${G_CDN_DOMAIN_IMG}/img/new/icon/first_plus.png`,
-                    alt='First Plus Badge'
-                )
-            .badge-item
-                img.s_inv(
-                    src=`${G_CDN_DOMAIN_IMG}/img/new/icon/second_plus.png`,
-                    alt='Second Plus Badge'
-                )
+            //-
+                .badge-item
+                    each badgeItemNo in ["first", "second"]
+                        img.s_inv(
+                            src=`${iconSrc}/${badgeItemNo}_plus.png`,
+                            alt=`${String.prototype.toUpperCase(badgeItemNo)}
+                            Plus Badge`
+                        )
