@@ -1,0 +1,21 @@
+//- 상단 여백, 이동시 삭제
+div(style="margin-top:16px;")
+|
+.list-tit.s_inv
+    p 작성한 댓글
+        span (-)
+    select(class="select-align")
+    //-
+        option(value="date") 등록순
+        option(value="new") 최신순
+        option(value="vote") 추천순
+|
+.comment-list-wp.s_inv
+    .novel-empty
+        img(
+            class="s_inv",
+            src=`#{G_CDN_DOMAIN_IMG}/img/new/user_profile/img_piaz.png`
+        )
+        p 댓글을 불러오는 중입니다..
+|
+.pagination.s_inv
