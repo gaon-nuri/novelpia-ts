@@ -1,32 +1,22 @@
 .hold-emo-wrapper
-    .user-card-top
-        h4 보유중인 이모티콘
-        button.top-setting-btn(type="button") 이모티콘 관리
+    +userCardTop("보유 중인 이모티콘", "이모티콘 관리")
     .user-section
         .hold-emo-rank.rank-wrapper
-            img.s_inv(
-                src = G_CDN_DOMAIN_IMG +
-                "/img/new/user_profile/rank_medal_icon.png"
-            )
-            .user-rank
-                p 이모티콘 보유랭킹
-                div -
-            .deco-bar
-            .hold-item-num
-                p 전체 보유 이모티콘
-                div -
+            mixin rank(rankType, stockType)
+                img.s_inv(src=`${profilePath}/rank_medal_icon.png`)
+                .user-rank
+                    p=`${rankType}랭킹`
+                    div -
+                .deco-bar
+                .hold-item-num
+                    p=`전체 ${stockType}`
+                    div -
+            +rank("이모티콘 보유", "보유 이모티콘")
         .get-emo-num
-            .get-emo-wrapper
-                img.s_inv(
-                    src=`${G_CDN_DOMAIN_IMG}/img/new/icon/emt_novel1.png`,
-                    alt=""
-                )
-                p 이모티콘
-                p -
-            .get-emo-wrapper
-                img.s_inv(
-                    src=`${G_CDN_DOMAIN_IMG}/img/new/icon/emt_pia1.png`,
-                    alt=""
-                )
-                p 노벨피아 이모티콘
-                p -
+            mixin getEmoWrapper(emojiName, emojiType)
+                .get-emo-wrapper
+                    img.s_inv(src=`${iconSrc}/${emojiName}.png` alt="")
+                    p=emojiType
+                    p -
+            +getEmoWrapper("emt_novel1", "이모티콘")
+            +getEmoWrapper("emt_pia1", "노벨피아 이모티콘")

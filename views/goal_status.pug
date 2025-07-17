@@ -1,25 +1,14 @@
 .achieve-wrapper
-    .user-card-top
-        h4 업적 달성 현황
-        button.top-setting-btn(type="button") 업적보기
+    +userCardTop("업적 달성 현황", "업적 보기")
     .user-section
         .achieve-bar.basic-achieve
-            .achieve-num
-                div 기본업적
-                .num-wrapper
-                    span.hold-num 0
-                    span.max-num /0
-            .graph-wrapper
-                .graph-num 0%
-                .bar-back
-                    .bar-front
+            mixin bar(content)
+                .achieve-num
+                    div=content
+                    .num-wrapper
+                        +numWrapper
+                .graph-wrapper
+                    +graphWrapper
+            +bar("기본 업적")
         .achieve-bar.hard-achieve
-            .achieve-num
-                div 특수업적
-                .num-wrapper
-                    span.hold-num 0
-                    span.max-num /0
-            .graph-wrapper
-                .graph-num 0%
-                .bar-back
-                    .bar-front
+            +bar("특수 업적")
