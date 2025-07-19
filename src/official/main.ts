@@ -9,7 +9,7 @@ import type {
     HttpStrFn,
     ToggleStateCbs,
     UserData
-} from "./types";
+} from "../types/main";
 
 async function getAlarmCnt(
     user: UserData,

@@ -5,7 +5,7 @@ import {
     epDownloadChk,
     getAlarmCnt,
     pickBtn
-} from "../src/official";
+} from "../src/official/main";
 import type {
     AlarmDelCbs,
     EpDownCheckRes,
@@ -15,7 +15,7 @@ import type {
     HttpStrFn,
     ToggleStateCbs,
     UserData
-} from "../src/types"
+} from "../src/types/main"
 
 describe("getAlarmCnt 단위 테스트", () => {
     const mockAlarmCnt: number = 1;
