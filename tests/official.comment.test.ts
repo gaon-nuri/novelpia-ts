@@ -1,13 +1,14 @@
 import status from "http-status";
 import {beforeEach, describe, expect, it, jest, test} from "@jest/globals";
 import {getCmtInWriter, getUserCmt} from "../src/official/official.comment";
-import {partialApply} from "../src/utils/utils";
+import {getRandInt, partialApply} from "../src/utils/utils";
 import type {HttpFnWithDataType, HttpRes} from "../src/types/type.main";
 import type {CmtUISetUpHandlers, MemberInfo} from "../src/types/type.comment";
 import {AuthGrade, ViewCmt} from "../src/types/enum.comment";
+import {MAX_CMT_CNT, MAX_USER_NO} from "../src/const/const.main";
 
 describe("getCmtInWriter 단위 테스트", () => {
-    const mockWriterNo = 1;
+    const mockWriterNo = getRandInt(1, MAX_USER_NO);
     const setMockHttpRetVal = (
         fn: jest.Mock<HttpFnWithDataType>,
         res: HttpRes
@@ -18,7 +19,7 @@ describe("getCmtInWriter 단위 테스트", () => {
     let mockHttp: jest.Mock<HttpFnWithDataType>;
     let mockGetUserCmt: jest.Mock;
     let getCmtOfWriter: Function;
-    let mockCount: number;
+    let mockCmtCnt: number;
 
     beforeEach(() => {
         mockHttp = jest.fn();
@@ -31,13 +32,13 @@ describe("getCmtInWriter 단위 테스트", () => {
         );
     });
 
-    describe("댓글 無", () => {
+    describe(`${mockWriterNo}번 회원: 댓글 無`, () => {
         beforeEach(() => {
-            mockCount = 0;
+            mockCmtCnt = 0;
             setMockHttpRetVal(mockHttp, {
                 status: status.IM_A_TEAPOT.toString(),
                 errmsg: "",
-                result: {cnt: mockCount}
+                result: {cnt: mockCmtCnt}
             });
         })
 
@@ -79,9 +80,9 @@ describe("getCmtInWriter 단위 테스트", () => {
         });
     });
 
-    describe("댓글 有", () => {
+    describe(`${mockWriterNo}번 회원: 댓글 有`, () => {
         beforeEach(() => {
-            mockCount = 1;
+            mockCmtCnt = getRandInt(1, MAX_CMT_CNT);
         })
 
         describe("성공 콜백 無", () => {
@@ -89,7 +90,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                 setMockHttpRetVal(mockHttp, {
                     status: status.OK.toString(),
                     errmsg: "",
-                    result: {cnt: mockCount}
+                    result: {cnt: mockCmtCnt}
                 });
 
                 await getCmtOfWriter();
@@ -120,7 +121,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                     setMockHttpRetVal(mockHttp, {
                         status: status.IM_A_TEAPOT.toString(),
                         errmsg: "",
-                        result: {cnt: mockCount}
+                        result: {cnt: mockCmtCnt}
                     });
 
                     await getCmtOfWriter(mockSuccCb);
@@ -157,7 +158,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.OK.toString(),
                             errmsg: "",
-                            result: {cnt: mockCount}
+                            result: {cnt: mockCmtCnt}
                         });
 
                         await getCmtOfWriterWithLoginCb();
@@ -176,7 +177,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.UNAUTHORIZED.toString(),
                             errmsg: "",
-                            result: {cnt: mockCount}
+                            result: {cnt: mockCmtCnt}
                         });
 
                         await getCmtOfWriterWithLoginCb();
@@ -204,7 +205,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.IM_A_TEAPOT.toString(),
                             errmsg: "",
-                            result: {cnt: mockCount}
+                            result: {cnt: mockCmtCnt}
                         });
 
                         await getCmtOfWriterWithLoginCb(
@@ -243,7 +244,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                             status: status.OK.toString(),
                             errmsg: "",
                             result: {
-                                cnt: mockCount
+                                cnt: mockCmtCnt
                             }
                         });
 
@@ -263,7 +264,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.IM_A_TEAPOT.toString(),
                             errmsg: "",
-                            result: {cnt: mockCount}
+                            result: {cnt: mockCmtCnt}
                         });
 
                         await getCmtOfWriterWithHTTPFbCb();
@@ -283,7 +284,7 @@ describe("getCmtInWriter 단위 테스트", () => {
 });
 
 describe("getUserCmt 단위 테스트", () => {
-    const mockMemNo = 1;
+    const mockMemNo = getRandInt(1, MAX_USER_NO);
     const mockMemInfo: MemberInfo = {
         g_mem_no: mockMemNo,            // 현재 로그인한 회원 번호
         g_mem_admin: AuthGrade.COMMON,  // 현재 로그인한 회원의 관리자 등급(숫자가 높을수록 권한 높음)
@@ -330,7 +331,7 @@ describe("getUserCmt 단위 테스트", () => {
             : 3; // 일반(?) 회원 등급
     }
 
-    describe("댓글 공개 상태", () => {
+    describe(`${mockMemNo}번 회원: 댓글 공개 상태`, () => {
         beforeEach(() => {
             setMemCmtStatusToHidden(ViewCmt.OPEN);
         })
@@ -378,7 +379,7 @@ describe("getUserCmt 단위 테스트", () => {
         });
     });
 
-    describe("댓글 비공개 상태", () => {
+    describe(`${mockMemNo}번 회원: 댓글 비공개 상태`, () => {
         beforeEach(() => {
             setMemCmtStatusToHidden(ViewCmt.HIDDEN);
         })

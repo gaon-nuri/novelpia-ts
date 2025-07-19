@@ -6,6 +6,7 @@ import {
     getAlarmCnt,
     pickBtn
 } from "../src/official/official.main";
+import {MAX_NOVEL_NO, MAX_USER_NO} from "../src/const/const.main";
 import type {
     AlarmDelCbs,
     HttpEpResFn,
@@ -15,14 +16,16 @@ import type {
     ToggleStateCbs,
     UserData
 } from "../src/types/type.main"
+import {getRandInt} from "../src/utils/utils";
 
 describe("getAlarmCnt 단위 테스트", () => {
-    const mockAlarmCnt: number = 1;
+    const maxAlarmCnt = 10
+    const mockAlarmCnt: number = getRandInt(1, maxAlarmCnt);
     const user: UserData = {
         data: {
             mem_adt: "1",
             mem_birthday: new Date().toISOString().slice(0, 10),
-            mem_no: "1234567"
+            mem_no: getRandInt(1, MAX_USER_NO).toString()
         },
         methods: {}
     }
@@ -172,7 +175,7 @@ describe("epDownloadChk 단위 테스트", () => {
 })
 
 describe("pickBtn 단위 테스트", () => {
-    const novelNo = 127306;
+    const novelNo = getRandInt(1, MAX_NOVEL_NO);
     const encode = (res: {
         isPicked: boolean, rank: string, opt: string
     }) => res.isPicked ? "off" : "on" + "|" + res.rank + "|" + res.opt;
@@ -227,7 +230,7 @@ describe("pickBtn 단위 테스트", () => {
         }
     }
 
-    it("should succeed to 'pick' novel", async () => {
+    it(`should succeed to 'pick' No.${novelNo} novel`, async () => {
         mockHttp.mockReturnValueOnce(Promise.resolve(encode({
             isPicked: false, rank: "공개전", opt: ""
         })));
@@ -243,8 +246,9 @@ describe("pickBtn 단위 테스트", () => {
         });
     });
 
-    it("should fail to 'pick' novel due to undone login", async () => {
-        mockHttp.mockReturnValueOnce(Promise.resolve("login|"));
+    it(`should fail to 'pick' No.${novelNo} novel due to undone login`,
+        async () => {
+            mockHttp.mockReturnValueOnce(Promise.resolve("login|"));
 
             await pickBtn(process.env.CSRF!, novelNo, mockHttp, toggleState);
 
@@ -257,7 +261,7 @@ describe("pickBtn 단위 테스트", () => {
         }
     );
 
-    it("should fail to 'pick' novel due to undone authentication",
+    it(`should fail to 'pick' No.${novelNo} novel due to undone authentication`,
         async () => {
             mockHttp.mockReturnValueOnce(Promise.resolve("auth|"));
 
@@ -273,7 +277,7 @@ describe("pickBtn 단위 테스트", () => {
         }
     );
 
-    it("should fail to 'pick' novel due to unknown error",
+    it(`should fail to 'pick' No.${novelNo} novel due to unknown error`,
         () => {
             mockHttp.mockReturnValueOnce(Promise.resolve("unknown|"));
 
