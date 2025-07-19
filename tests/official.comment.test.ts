@@ -1,7 +1,7 @@
 import status from "http-status";
 import {beforeEach, describe, expect, jest, test} from "@jest/globals";
-import {getCmtInWriter} from "../src/official/comment";
-import type {HttpFnWithDataType, HttpRes} from "../src/types/main";
+import {getCmtInWriter} from "../src/official/official.comment";
+import type {HttpFnWithDataType, HttpRes} from "../src/types/type.main";
 
 describe("getCmtInWriter 단위 테스트", () => {
     const mockWriterNo = 1;
