@@ -59,8 +59,8 @@ async function getCmtInWriter(
  * */
 function getUserCmt(
     memInfo: MemberInfo,
-    getMemberCmt: Function,
     // 테스트용 의존성 주입
+    mockGetMemberCmt?: Function,
     cmtUISetUpHandlers?: CmtUISetUpHandlers,
     cmtVisbilityHandler?: Function // UI 마무리 처리 및 후처리용 콜백
 ) {
@@ -105,7 +105,13 @@ function getUserCmt(
     // (선택) 2. 댓글 정렬 옵션 세팅
     cmtUISetUpHandlers?.setCmtSortOpts();
     // 3. 회원(또는 관리자) 여부 및 댓글 공개설정에 따른 처리
-    (cmtVisbilityHandler || cmtVisbilityHandlerFb)(memInfo, getMemberCmt);
+    (cmtVisbilityHandler || cmtVisbilityHandlerFb)(
+        memInfo, mockGetMemberCmt ? mockGetMemberCmt : getMemberCmt
+    );
+}
+
+function getMemberCmt() {
+
 }
 
 export {
