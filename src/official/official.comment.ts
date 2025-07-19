@@ -5,7 +5,7 @@
 // comment
 import HTTPMethod from "http-method-enum";
 import {status as HTTPStatus} from "http-status";
-import type {HttpFnWithDataType, HttpRes} from "../types/main";
+import type {HttpFnWithDataType, HttpRes} from "../types/type.main";
 
 async function getCmtInWriter(
     cmtWriterNo: number, // 해당 페이지의 회원 번호(즉, 프로필 주인)
