@@ -1,5 +1,5 @@
 import status from "http-status";
-import {beforeEach, describe, expect, it, jest, test} from "@jest/globals";
+import {beforeEach, describe, expect, it, jest} from "@jest/globals";
 import {getCmtInWriter, getUserCmt} from "../src/official/official.comment";
 import {getRandInt, partialApply} from "../src/utils/utils";
 import type {HttpFnWithDataType, HttpRes} from "../src/types/type.main";
@@ -42,7 +42,7 @@ describe("getCmtInWriter 단위 테스트", () => {
             });
         })
 
-        test("어떤 콜백도 無", async () => {
+        it("should do nothing when no callback is given", async () => {
             await getCmtOfWriter();
 
             [
@@ -65,18 +65,20 @@ describe("getCmtInWriter 단위 테스트", () => {
                 });
             });
 
-            test("성공 콜백 有", async () => {
-                await getCmtOfWriter(mockSuccCb);
+            it("should not call success callback when no comment is found",
+                async () => {
+                    await getCmtOfWriter(mockSuccCb);
 
-                [
-                    mockHttp,
-                    mockGetUserCmt
-                ].forEach(cb => {
-                    expect(cb).toHaveBeenCalledTimes(1);
-                });
+                    [
+                        mockHttp,
+                        mockGetUserCmt
+                    ].forEach(cb => {
+                        expect(cb).toHaveBeenCalledTimes(1);
+                    });
 
-                expect(mockSuccCb).not.toHaveBeenCalled();
-            });
+                    expect(mockSuccCb).not.toHaveBeenCalled();
+                }
+            );
         });
     });
 
@@ -86,22 +88,24 @@ describe("getCmtInWriter 단위 테스트", () => {
         })
 
         describe("성공 콜백 無", () => {
-            test("HTTP OK", async () => {
-                setMockHttpRetVal(mockHttp, {
-                    status: status.OK.toString(),
-                    errmsg: "",
-                    result: {cnt: mockCmtCnt}
-                });
+            it("should do nothing on HTTP OK response when no callback given",
+                async () => {
+                    setMockHttpRetVal(mockHttp, {
+                        status: status.OK.toString(),
+                        errmsg: "",
+                        result: {cnt: mockCmtCnt}
+                    });
 
-                await getCmtOfWriter();
+                    await getCmtOfWriter();
 
-                [
-                    mockHttp,
-                    mockGetUserCmt
-                ].forEach(cb => {
-                    expect(cb).toHaveBeenCalledTimes(1)
-                });
-            });
+                    [
+                        mockHttp,
+                        mockGetUserCmt
+                    ].forEach(cb => {
+                        expect(cb).toHaveBeenCalledTimes(1)
+                    });
+                }
+            );
         });
 
         describe("성공 콜백 有", () => {
@@ -117,7 +121,8 @@ describe("getCmtInWriter 단위 테스트", () => {
             });
 
             describe("로그인 콜백 無", () => {
-                test("기본 로그인 콜백, 미사용", async () => {
+                it("should call succeed callback when comment is found" +
+                    " and callback is given", async () => {
                     setMockHttpRetVal(mockHttp, {
                         status: status.IM_A_TEAPOT.toString(),
                         errmsg: "",
@@ -154,7 +159,7 @@ describe("getCmtInWriter 단위 테스트", () => {
                 });
 
                 describe("HTTP 콜백 無", () => {
-                    test("HTTP 200", async () => {
+                    it("should do nothing on HTTP OK response", async () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.OK.toString(),
                             errmsg: "",
@@ -173,7 +178,8 @@ describe("getCmtInWriter 단위 테스트", () => {
                         expect(mockLoginCb).not.toHaveBeenCalled();
                     })
 
-                    test("HTTP 401", async () => {
+                    it("should call login callback when HTTP Unauthorized" +
+                        " response and callback is given", async () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.UNAUTHORIZED.toString(),
                             errmsg: "",
@@ -201,7 +207,8 @@ describe("getCmtInWriter 단위 테스트", () => {
                         });
                     });
 
-                    test("HTTP 200/401 外", async () => {
+                    it("should call HTTP fallback callback when HTTP status" +
+                        " except OK or Unauthorized given", async () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.IM_A_TEAPOT.toString(),
                             errmsg: "",
@@ -213,10 +220,15 @@ describe("getCmtInWriter 단위 테스트", () => {
                             mockHttpFbCb
                         );
 
-                        expect(mockHttp).toHaveBeenCalledTimes(1);
-                        expect(mockLoginCb).toHaveBeenCalledTimes(0);
-                        expect(mockHttpFbCb).toHaveBeenCalledTimes(1);
-                        expect(mockGetUserCmt).toHaveBeenCalledTimes(1);
+                        [
+                            mockHttp,
+                            mockGetUserCmt,
+                            mockHttpFbCb
+                        ].forEach(cb => {
+                            expect(cb).toHaveBeenCalledTimes(1)
+                        });
+
+                        expect(mockLoginCb).not.toHaveBeenCalled();
                     });
                 });
             });
@@ -239,7 +251,8 @@ describe("getCmtInWriter 단위 테스트", () => {
                         );
                     });
 
-                    test("HTTP 200", async () => {
+                    it("should not call HTTP fallback callback on HTTP OK" +
+                        " response", async () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.OK.toString(),
                             errmsg: "",
@@ -260,7 +273,8 @@ describe("getCmtInWriter 단위 테스트", () => {
                         expect(mockHttpFbCb).not.toHaveBeenCalled();
                     })
 
-                    test("HTTP 200/401 外", async () => {
+                    it("should call HTTP fallback callback when HTTP status" +
+                        " except OK or Unauthorized given", async () => {
                         setMockHttpRetVal(mockHttp, {
                             status: status.IM_A_TEAPOT.toString(),
                             errmsg: "",
