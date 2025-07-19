@@ -16,9 +16,9 @@ import {AuthGrade, ViewCmt} from "../types/enum.comment";
 async function getCmtInWriter(
     cmtWriterNo: number, // 해당 페이지의 회원 번호(즉, 프로필 주인)
     http: HttpFnWithDataType,
-    getUserCmt: () => void,
+    memInfo: MemberInfo,
     // 테스트 의존성 주입
-    mockSuccCb?: (res: HttpRes, ...[]) => void,
+    mockGetUserCmt?: typeof getUserCmt,
     mockLoginCb?: Function,
     memLogModalOn?: Function,
     httpFbCb?: (res: HttpRes) => void
@@ -31,12 +31,14 @@ async function getCmtInWriter(
     };
     const dataType = "json";
 
-    function fallbackCb(
+    function HttpResCb(
         res: HttpRes,
         httpFbCb?: (res: HttpRes) => void
     ) {
         switch (Number(res.status)) {
             case HTTPStatus.OK:
+                if (res.result.cnt > 0)
+                    (mockGetUserCmt || getUserCmt)(memInfo);
                 break;
             case HTTPStatus.UNAUTHORIZED:
                 if (mockLoginCb) mockLoginCb()
@@ -49,9 +51,7 @@ async function getCmtInWriter(
     }
 
     const res = await http(type, url, data, dataType);
-    if (res.result.cnt > 0)
-        (mockSuccCb ? mockSuccCb : fallbackCb)(res, httpFbCb);
-    getUserCmt();
+    HttpResCb(res, httpFbCb);
 }
 
 /* 회원의 프로필 페이지에서 댓글 영역을 로딩하고,
