@@ -1,0 +1,17 @@
+.novel-thumbnail
+    img.s_inv(src=`${G_CDN_DOMAIN_IMG}/img/layout/readycover4.png`)
+|
+.novel-info
+    .novel-tit ~ 소설 이름을 생각해내는 중 ~
+    .novel-story ~ 기가 막힌 스토리라인을 적어보는 중 ~
+    .info-bottom
+        .novel-count
+            span.view 0
+            span.epi EP.0
+            span.update -
+        .novel-tag
+            //--
+                each novelTag in ["#SF", "#판타지", "#전생", "#하렘", "#인터넷방송"]
+                    span=novelTag
+                each novelTag in ["#남녀역전", "#먼치킨", "#코스믹호러", "#스페이스오페라"]
+                    span=novelTag
