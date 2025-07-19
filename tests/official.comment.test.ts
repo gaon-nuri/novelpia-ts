@@ -7,6 +7,22 @@ import type {CmtUISetUpHandlers, MemberInfo} from "../src/types/type.comment";
 import {AuthGrade, ViewCmt} from "../src/types/enum.comment";
 import {MAX_CMT_CNT, MAX_USER_NO} from "../src/const/const.main";
 
+const mockMemNo = getRandInt(1, MAX_USER_NO);
+const mockMemInfo: MemberInfo = {
+    g_mem_no: mockMemNo,            // 현재 로그인한 회원 번호
+    g_mem_admin: AuthGrade.COMMON,  // 현재 로그인한 회원의 관리자 등급(숫자가 높을수록 권한 높음)
+    g_cate: mockMemNo,              // 해당 페이지의 회원 번호(즉, 프로필 주인)
+    g_member_view: {
+        mem_no: mockMemNo,
+        view_comment: ViewCmt.HIDDEN,
+        view_like_novel: 0,
+        view_like_hash: 0,
+        view_sponsor: 0,
+        episode_cnt: 1,
+        comment_cnt: 0
+    }
+};
+
 describe("getCmtInWriter 단위 테스트", () => {
     const mockWriterNo = getRandInt(1, MAX_USER_NO);
     const setMockHttpRetVal = (
@@ -17,18 +33,16 @@ describe("getCmtInWriter 단위 테스트", () => {
     }
 
     let mockHttp: jest.Mock<HttpFnWithDataType>;
-    let mockGetUserCmt: jest.Mock;
     let getCmtOfWriter: Function;
     let mockCmtCnt: number;
 
     beforeEach(() => {
         mockHttp = jest.fn();
-        mockGetUserCmt = jest.fn();
         getCmtOfWriter = partialApply(
             getCmtInWriter,
             mockWriterNo,
             mockHttp,
-            mockGetUserCmt
+            mockMemInfo
         );
     });
 
@@ -36,7 +50,7 @@ describe("getCmtInWriter 단위 테스트", () => {
         beforeEach(() => {
             mockCmtCnt = 0;
             setMockHttpRetVal(mockHttp, {
-                status: status.IM_A_TEAPOT.toString(),
+                status: status.OK.toString(),
                 errmsg: "",
                 result: {cnt: mockCmtCnt}
             });
@@ -45,38 +59,28 @@ describe("getCmtInWriter 단위 테스트", () => {
         it("should do nothing when no callback is given", async () => {
             await getCmtOfWriter();
 
-            [
-                mockHttp,
-                mockGetUserCmt
-            ].forEach(cb => {
-                expect(cb).toHaveBeenCalledTimes(1)
-            });
+            expect(mockHttp).toHaveBeenCalledTimes(1)
         });
 
-        describe("성공 콜백 有", () => {
-            let mockSuccCb: jest.Mock<(res: HttpRes, ...[]) => void>;
+        describe("댓글 가져오기 콜백 有", () => {
+            let mockGetUserCmt: jest.Mock<(res: HttpRes, ...[]) => void>;
 
             beforeEach(() => {
-                mockSuccCb = jest.fn((
+                mockGetUserCmt = jest.fn((
                     res: HttpRes,
                     ...[]
                 ) => {
-                    console.info(res.result.cnt);
+                    console.info(`${res.result.cnt} comments retreived`);
                 });
             });
 
             it("should not call success callback when no comment is found",
                 async () => {
-                    await getCmtOfWriter(mockSuccCb);
+                    await getCmtOfWriter(mockGetUserCmt);
 
-                    [
-                        mockHttp,
-                        mockGetUserCmt
-                    ].forEach(cb => {
-                        expect(cb).toHaveBeenCalledTimes(1);
-                    });
+                    expect(mockHttp).toHaveBeenCalledTimes(1)
 
-                    expect(mockSuccCb).not.toHaveBeenCalled();
+                    expect(mockGetUserCmt).not.toHaveBeenCalled();
                 }
             );
         });
@@ -87,7 +91,7 @@ describe("getCmtInWriter 단위 테스트", () => {
             mockCmtCnt = getRandInt(1, MAX_CMT_CNT);
         })
 
-        describe("성공 콜백 無", () => {
+        describe("댓글 가져오기 콜백 無", () => {
             it("should do nothing on HTTP OK response when no callback given",
                 async () => {
                     setMockHttpRetVal(mockHttp, {
@@ -98,25 +102,17 @@ describe("getCmtInWriter 단위 테스트", () => {
 
                     await getCmtOfWriter();
 
-                    [
-                        mockHttp,
-                        mockGetUserCmt
-                    ].forEach(cb => {
-                        expect(cb).toHaveBeenCalledTimes(1)
-                    });
+                    expect(mockHttp).toHaveBeenCalledTimes(1)
                 }
             );
         });
 
-        describe("성공 콜백 有", () => {
-            let mockSuccCb: jest.Mock<(res: HttpRes, ...[]) => void>;
+        describe("댓글 가져오기 콜백 有", () => {
+            let mockGetUserCmt: jest.Mock<(info: MemberInfo, ...[]) => void>;
 
             beforeEach(() => {
-                mockSuccCb = jest.fn((
-                    res: HttpRes,
-                    ...[]
-                ) => {
-                    console.info(res.result.cnt);
+                mockGetUserCmt = jest.fn((info: MemberInfo, ...[]) => {
+                    console.info(`${info.g_cate}번 회원의 댓글 가져오기 성공`);
                 });
             });
 
@@ -124,17 +120,16 @@ describe("getCmtInWriter 단위 테스트", () => {
                 it("should call succeed callback when comment is found" +
                     " and callback is given", async () => {
                     setMockHttpRetVal(mockHttp, {
-                        status: status.IM_A_TEAPOT.toString(),
+                        status: status.OK.toString(),
                         errmsg: "",
                         result: {cnt: mockCmtCnt}
                     });
 
-                    await getCmtOfWriter(mockSuccCb);
+                    await getCmtOfWriter(mockGetUserCmt);
 
                     [
                         mockHttp,
-                        mockSuccCb,
-                        mockGetUserCmt
+                        mockGetUserCmt,
                     ].forEach(cb => {
                         expect(cb).toHaveBeenCalledTimes(1)
                     });
@@ -142,7 +137,7 @@ describe("getCmtInWriter 단위 테스트", () => {
             });
         });
 
-        describe("성공 콜백 無", () => {
+        describe("댓글 가져오기 콜백 無", () => {
             describe("로그인 콜백 有", () => {
                 let mockLoginCb: jest.Mock;
                 let getCmtOfWriterWithLoginCb: Function;
@@ -168,12 +163,7 @@ describe("getCmtInWriter 단위 테스트", () => {
 
                         await getCmtOfWriterWithLoginCb();
 
-                        [
-                            mockHttp,
-                            mockGetUserCmt
-                        ].forEach(cb => {
-                            expect(cb).toHaveBeenCalledTimes(1)
-                        });
+                        expect(mockHttp).toHaveBeenCalledTimes(1)
 
                         expect(mockLoginCb).not.toHaveBeenCalled();
                     })
@@ -191,7 +181,6 @@ describe("getCmtInWriter 단위 테스트", () => {
                         [
                             mockHttp,
                             mockLoginCb,
-                            mockGetUserCmt
                         ].forEach(cb => {
                             expect(cb).toHaveBeenCalledTimes(1)
                         });
@@ -222,7 +211,6 @@ describe("getCmtInWriter 단위 테스트", () => {
 
                         [
                             mockHttp,
-                            mockGetUserCmt,
                             mockHttpFbCb
                         ].forEach(cb => {
                             expect(cb).toHaveBeenCalledTimes(1)
@@ -263,12 +251,7 @@ describe("getCmtInWriter 단위 테스트", () => {
 
                         await getCmtOfWriterWithHTTPFbCb();
 
-                        [
-                            mockHttp,
-                            mockGetUserCmt
-                        ].forEach(cb => {
-                            expect(cb).toHaveBeenCalledTimes(1);
-                        });
+                        expect(mockHttp).toHaveBeenCalledTimes(1)
 
                         expect(mockHttpFbCb).not.toHaveBeenCalled();
                     })
@@ -286,7 +269,6 @@ describe("getCmtInWriter 단위 테스트", () => {
                         [
                             mockHttp,
                             mockHttpFbCb,
-                            mockGetUserCmt
                         ].forEach(cb => {
                             expect(cb).toHaveBeenCalledTimes(1)
                         });
@@ -298,22 +280,6 @@ describe("getCmtInWriter 단위 테스트", () => {
 });
 
 describe("getUserCmt 단위 테스트", () => {
-    const mockMemNo = getRandInt(1, MAX_USER_NO);
-    const mockMemInfo: MemberInfo = {
-        g_mem_no: mockMemNo,            // 현재 로그인한 회원 번호
-        g_mem_admin: AuthGrade.COMMON,  // 현재 로그인한 회원의 관리자 등급(숫자가 높을수록 권한 높음)
-        g_cate: mockMemNo,              // 해당 페이지의 회원 번호(즉, 프로필 주인)
-        g_member_view: {
-            mem_no: mockMemNo,
-            view_comment: ViewCmt.HIDDEN,
-            view_like_novel: 0,
-            view_like_hash: 0,
-            view_sponsor: 0,
-            episode_cnt: 1,
-            comment_cnt: 0
-        }
-    };
-
     let mockGetMemberCmt: jest.Mock;
     let getCmtOfUser: Function;
 
