@@ -1,11 +1,11 @@
 import status from "http-status";
 import {beforeEach, describe, expect, it, jest} from "@jest/globals";
 import {getCmtInWriter, getUserCmt} from "../src/official/official.comment";
-import {getRandInt, partialApply} from "../src/utils/utils";
-import type {HttpFnWithDataType, HttpRes} from "../src/types/type.main";
-import type {CmtUISetUpHandlers, MemberInfo} from "../src/types/type.comment";
-import {AuthGrade, ViewCmt} from "../src/types/enum.comment";
-import {MAX_CMT_CNT, MAX_USER_NO} from "../src/const/const.main";
+import {getRandInt, partialApply} from "@utils/utils";
+import type {HttpFnWithDataType, HttpRes} from "@type/type.main";
+import type {CmtUISetUpHandlers, MemberInfo} from "@type/type.comment";
+import {AuthGrade, ViewCmt} from "@type/enum.comment";
+import {MAX_CMT_CNT, MAX_USER_NO} from "@const/const.main";
 
 const mockMemNo = getRandInt(1, MAX_USER_NO);
 const mockMemInfo: MemberInfo = {
