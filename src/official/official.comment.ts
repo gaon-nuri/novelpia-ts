@@ -5,13 +5,9 @@
 // comment
 import HTTPMethod from "http-method-enum";
 import {status as HTTPStatus} from "http-status";
-import type {HttpFnWithDataType, HttpRes} from "../types/type.main";
-import type {
-    CmtUISetUpHandlers,
-    MemberInfo,
-    ReqCbs
-} from "../types/type.comment";
-import {AuthGrade, ViewCmt} from "../types/enum.comment";
+import type {HttpFnWithDataType, HttpRes} from "@type/type.main";
+import type {CmtUISetUpHandlers, MemberInfo, ReqCbs} from "@type/type.comment";
+import {AuthGrade, ViewCmt} from "@type/enum.comment";
 
 async function getCmtInWriter(
     cmtWriterNo: number, // 해당 페이지의 회원 번호(즉, 프로필 주인)

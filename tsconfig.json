@@ -7,10 +7,35 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "skipLibCheck": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "paths": {
+            "@official/*": [
+                "./src/official/*",
+                // 소스 폴더
+                "../src/official/*"
+                // 테스트 폴더
+            ],
+            "@type/*": [
+                "./src/types/*",
+                // 소스 폴더
+                "../src/types/*"
+                // 테스트 폴더
+            ],
+            "@const/*": [
+                "./src/const/*",
+                // 소스 폴더
+                "../src/const/*"
+                // 테스트 폴더
+            ],
+            "@utils/*": [
+                "./src/utils/*",
+                // 소스 폴더
+                "../src/utils/*"
+                // 테스트 폴더
+            ]
+        }
     },
     "include": [
-        "src",
-        "tests"
+        "src"
     ]
 }

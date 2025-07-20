@@ -5,8 +5,8 @@ import {
     epDownloadChk,
     getAlarmCnt,
     pickBtn
-} from "../src/official/official.main";
-import {MAX_NOVEL_NO, MAX_USER_NO} from "../src/const/const.main";
+} from "@official/official.main";
+import {MAX_NOVEL_NO, MAX_USER_NO} from "@const/const.main";
 import type {
     AlarmDelCbs,
     HttpEpResFn,
@@ -15,8 +15,8 @@ import type {
     HttpStrFn,
     ToggleStateCbs,
     UserData
-} from "../src/types/type.main"
-import {getRandInt} from "../src/utils/utils";
+} from "@type/type.main"
+import {getRandInt} from "@utils/utils";
 
 describe("getAlarmCnt 단위 테스트", () => {
     const maxAlarmCnt = 10
