@@ -1,11 +1,12 @@
 import status from "http-status";
-import {beforeEach, describe, expect, it, jest} from "@jest/globals";
+import {beforeEach, describe, expect, it} from "@jest/globals";
 import {getCmtInWriter, getUserCmt} from "../src/official/official.comment";
 import {getRandInt, partialApply} from "@utils/utils";
 import type {HttpFnWithDataType, HttpRes} from "@type/type.main";
 import type {CmtUISetUpHandlers, MemberInfo} from "@type/type.comment";
 import {AuthGrade, ViewCmt} from "@type/enum.comment";
 import {MAX_CMT_CNT, MAX_USER_NO} from "@const/const.main";
+import {Mock, mockFn, stubFn} from "./test_lib";
 
 const mockMemNo = getRandInt(1, MAX_USER_NO);
 const mockMemInfo: MemberInfo = {
@@ -26,18 +27,18 @@ const mockMemInfo: MemberInfo = {
 describe("getCmtInWriter 단위 테스트", () => {
     const mockWriterNo = getRandInt(1, MAX_USER_NO);
     const setMockHttpRetVal = (
-        fn: jest.Mock<HttpFnWithDataType>,
+        fn: Mock<HttpFnWithDataType>,
         res: HttpRes
     ) => {
         fn.mockReturnValue(Promise.resolve(res));
     }
 
-    let mockHttp: jest.Mock<HttpFnWithDataType>;
+    let mockHttp: Mock<HttpFnWithDataType>;
     let getCmtOfWriter: Function;
     let mockCmtCnt: number;
 
     beforeEach(() => {
-        mockHttp = jest.fn();
+        mockHttp = stubFn() as Mock<HttpFnWithDataType>;
         getCmtOfWriter = partialApply(
             getCmtInWriter,
             mockWriterNo,
@@ -63,10 +64,10 @@ describe("getCmtInWriter 단위 테스트", () => {
         });
 
         describe("댓글 가져오기 콜백 有", () => {
-            let mockGetUserCmt: jest.Mock<(res: HttpRes, ...[]) => void>;
+            let mockGetUserCmt: Mock<(res: HttpRes, ...[]) => void>;
 
             beforeEach(() => {
-                mockGetUserCmt = jest.fn((
+                mockGetUserCmt = mockFn((
                     res: HttpRes,
                     ...[]
                 ) => {
@@ -108,10 +109,10 @@ describe("getCmtInWriter 단위 테스트", () => {
         });
 
         describe("댓글 가져오기 콜백 有", () => {
-            let mockGetUserCmt: jest.Mock<(info: MemberInfo, ...[]) => void>;
+            let mockGetUserCmt: Mock<(info: MemberInfo, ...[]) => void>;
 
             beforeEach(() => {
-                mockGetUserCmt = jest.fn((info: MemberInfo, ...[]) => {
+                mockGetUserCmt = mockFn((info: MemberInfo, ...[]) => {
                     console.info(`${info.g_cate}번 회원의 댓글 가져오기 성공`);
                 });
             });
@@ -139,11 +140,11 @@ describe("getCmtInWriter 단위 테스트", () => {
 
         describe("댓글 가져오기 콜백 無", () => {
             describe("로그인 콜백 有", () => {
-                let mockLoginCb: jest.Mock;
+                let mockLoginCb: ReturnType<typeof mockFn>;
                 let getCmtOfWriterWithLoginCb: Function;
 
                 beforeEach(() => {
-                    mockLoginCb = jest.fn(() => {
+                    mockLoginCb = mockFn(() => {
                         console.info("Logined");
                     });
                     getCmtOfWriterWithLoginCb = partialApply(
@@ -188,10 +189,10 @@ describe("getCmtInWriter 단위 테스트", () => {
                 });
 
                 describe("HTTP 콜백 有", () => {
-                    let mockHttpFbCb: jest.Mock<(res: HttpRes) => void>;
+                    let mockHttpFbCb: Mock<(res: HttpRes) => void>;
 
                     beforeEach(() => {
-                        mockHttpFbCb = jest.fn((res: HttpRes) => {
+                        mockHttpFbCb = mockFn((res: HttpRes) => {
                             console.info(res.status);
                         });
                     });
@@ -223,11 +224,11 @@ describe("getCmtInWriter 단위 테스트", () => {
 
             describe("로그인 콜백 無", () => {
                 describe("HTTP 콜백 有", () => {
-                    let mockHttpFbCb: jest.Mock<(res: HttpRes) => void>;
+                    let mockHttpFbCb: Mock<(res: HttpRes) => void>;
                     let getCmtOfWriterWithHTTPFbCb: Function;
 
                     beforeEach(() => {
-                        mockHttpFbCb = jest.fn((res: HttpRes) => {
+                        mockHttpFbCb = mockFn((res: HttpRes) => {
                             console.info(res.status);
                         });
                         getCmtOfWriterWithHTTPFbCb = partialApply(
@@ -280,11 +281,11 @@ describe("getCmtInWriter 단위 테스트", () => {
 });
 
 describe("getUserCmt 단위 테스트", () => {
-    let mockGetMemberCmt: jest.Mock;
+    let mockGetMemberCmt: ReturnType<typeof stubFn>;
     let getCmtOfUser: Function;
 
     beforeEach(() => {
-        mockGetMemberCmt = jest.fn();
+        mockGetMemberCmt = stubFn();
         getCmtOfUser = partialApply(
             getUserCmt,
             mockMemInfo,
@@ -407,10 +408,10 @@ describe("getUserCmt 단위 테스트", () => {
 
                 beforeEach(() => {
                     mockCmtUISetUpHandlers = {
-                        appendCmtHTML: jest.fn(() => {
+                        appendCmtHTML: mockFn(() => {
                             console.info("댓글 HTML 추가");
                         }),
-                        setCmtSortOpts: jest.fn(() => {
+                        setCmtSortOpts: mockFn(() => {
                             console.info("댓글 정렬 옵션 나열");
                         })
                     };

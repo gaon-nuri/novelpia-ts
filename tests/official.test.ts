@@ -1,5 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import status from "http-status";
-import {beforeEach, describe, expect, it, jest} from "@jest/globals";
+import {beforeEach, describe, expect, it} from "@jest/globals";
 import {
     alarmAllDel,
     epDownloadChk,
@@ -17,6 +21,7 @@ import type {
     UserData
 } from "@type/type.main"
 import {getRandInt} from "@utils/utils";
+import {Mock, mockFn, stubFn} from "./test_lib";
 
 describe("getAlarmCnt 단위 테스트", () => {
     const maxAlarmCnt = 10
@@ -30,23 +35,23 @@ describe("getAlarmCnt 단위 테스트", () => {
         methods: {}
     }
 
-    type MockHttp = jest.Mock<HttpFn>;
+    type MockHttp = Mock<HttpFn>;
 
     const setMockHttpRetVal = (fn: MockHttp, res: HttpRes) => {
         fn.mockReturnValue(Promise.resolve(res));
     };
 
     let mockHttp: MockHttp;
-    let mockCb: jest.Mock;
+    let mockCb: ReturnType<typeof stubFn>;
 
     beforeEach(() => {
-        mockHttp = jest.fn();
+        mockHttp = stubFn() as MockHttp;
         setMockHttpRetVal(mockHttp, {
             status: status.OK.toString(),
             errmsg: "",
             result: {cnt: mockAlarmCnt}
         });
-        mockCb = jest.fn();
+        mockCb = stubFn();
     });
 
     it("should get the correct alarm count", async () => {
@@ -91,21 +96,21 @@ describe("getAlarmCnt 단위 테스트", () => {
 });
 
 describe("alarmAllDel 단위 테스트", () => {
-    type MockHttpStr = jest.Mock<HttpStrFn>;
+    type MockHttpStr = Mock<HttpStrFn>;
 
     let mockHttp: MockHttpStr;
-    let mockOkCb: jest.Mock;
-    let mockLoginCb: jest.Mock;
+    let mockOkCb: ReturnType<typeof stubFn>;
+    let mockLoginCb: ReturnType<typeof mockFn>;
     let alarmDelCbs: AlarmDelCbs;
     let alarmAllDelBinded: Function;
 
     beforeEach(() => {
-        mockHttp = jest.fn();
-        mockOkCb = jest.fn(() => {
+        mockHttp = stubFn() as MockHttpStr;
+        mockOkCb = mockFn(() => {
             console.info("모든 알람이 삭제되었습니다");
             console.info("page reloaded");
         });
-        mockLoginCb = jest.fn(() => {
+        mockLoginCb = mockFn(() => {
             console.warn("로그인이 해제 된 것 같습니다.\n로그인 하시겠습니까?");
             console.info("redirect to /page/login");
         });
@@ -141,10 +146,10 @@ describe("alarmAllDel 단위 테스트", () => {
 });
 
 describe("epDownloadChk 단위 테스트", () => {
-    let mockHttp: jest.Mock<HttpEpResFn>;
+    let mockHttp: Mock<HttpEpResFn>;
 
     beforeEach(() => {
-        mockHttp = jest.fn();
+        mockHttp = stubFn() as Mock<HttpEpResFn>;
     });
 
     it("should get 'CAN download' response", async () => {
@@ -161,7 +166,7 @@ describe("epDownloadChk 단위 테스트", () => {
                 code: "", errmsg: "", status: status.TOO_MANY_REQUESTS
             }));
             const errMsg = `HTTP ${status.TOO_MANY_REQUESTS} 오류`;
-            const failCb = jest.fn(() => {
+            const failCb = mockFn(() => {
                 throw new Error(errMsg);
             });
 
@@ -180,24 +185,22 @@ describe("pickBtn 단위 테스트", () => {
         isPicked: boolean, rank: string, opt: string
     }) => res.isPicked ? "off" : "on" + "|" + res.rank + "|" + res.opt;
 
-    let mockHttp: jest.Mock<(
-        type: string, url: string, data: {}
-    ) => Promise<string>>;
-    let mockOnCb: jest.Mock;
-    let mockOffCb: jest.Mock;
-    let mockLoginCb: jest.Mock;
-    let mockAuthCb: jest.Mock;
+    let mockHttp: Mock<HttpStrFn>;
+    let mockOnCb: ReturnType<typeof mockFn>;
+    let mockOffCb: ReturnType<typeof mockFn>;
+    let mockLoginCb: ReturnType<typeof mockFn>;
+    let mockAuthCb: ReturnType<typeof mockFn>;
     let toggleState: (data: string, _cbs: ToggleStateCbs) => void;
 
     beforeEach(() => {
-        mockHttp = jest.fn();
-        mockOnCb = jest.fn(() => console.info("인생픽이 등록되었습니다."));
-        mockOffCb = jest.fn(() => console.warn("인생픽이 해제되었습니다."));
-        mockLoginCb = jest.fn(() => {
+        mockHttp = stubFn() as Mock<HttpStrFn>;
+        mockOnCb = mockFn(() => console.info("인생픽이 등록되었습니다."));
+        mockOffCb = mockFn(() => console.warn("인생픽이 해제되었습니다."));
+        mockLoginCb = mockFn(() => {
             console.warn("인생픽 등록을 위해서는 로그인이 필요합니다.\n로그인 하시겠습니까?");
             console.info("logined");
         });
-        mockAuthCb = jest.fn(() => {
+        mockAuthCb = mockFn(() => {
             console.warn("인생픽 등록을 위해서는 본인인증이 필요합니다.\n본인인증 하시겠습니까?");
             console.info("redirected to /page/age_auth");
         });
