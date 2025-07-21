@@ -1,15 +1,16 @@
-import {beforeEach, describe, expect, it, jest} from "@jest/globals";
+import {beforeEach, describe, expect, it} from "@jest/globals";
 import {init} from "../src/official/official.setup";
+import {mockFn} from "./test_lib";
 
 describe("init 단위 테스트", () => {
     const validMemNo = 1;
     const invalidMemNo = -1;
-    let mockGetUserChk: jest.Mock;
-    let mockUpdateHist: jest.Mock;
-    let mockLoginCb: jest.Mock;
+    let mockGetUserChk: ReturnType<typeof mockFn>;
+    let mockUpdateHist: ReturnType<typeof mockFn>;
+    let mockLoginCb: ReturnType<typeof mockFn>;
 
     beforeEach(() => {
-        mockLoginCb = jest.fn(() => {
+        mockLoginCb = mockFn(() => {
             console.warn("로그인 후 이용 가능합니다.");
         });
     });
@@ -27,10 +28,10 @@ describe("init 단위 테스트", () => {
 
     describe("로그인 불필요, 계속 진행", () => {
         beforeEach(() => {
-            mockGetUserChk = jest.fn(() => {
+            mockGetUserChk = mockFn(() => {
                 console.info("getUserChk 호출");
             });
-            mockUpdateHist = jest.fn(() => {
+            mockUpdateHist = mockFn(() => {
                 console.info("방문 기록 갱신");
             });
         });
