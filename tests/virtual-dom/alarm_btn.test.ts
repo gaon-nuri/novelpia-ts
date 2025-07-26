@@ -7,9 +7,10 @@ import {beforeAll, beforeEach, describe, expect, it} from "@jest/globals";
 import status from "http-status";
 import {Mock, stubFn} from "../test_lib";
 import {getRandInt, partialApply} from "../../src/utils/utils";
-import {HttpFn, HttpRes, UserData} from "../../src/types/type.main";
+import {HttpFn, UserData} from "../../src/types/type.main";
 import {MAX_USER_NO} from "../../src/const/const.main";
 import {getAlarmCnt} from "../../src/official/official.main";
+import {HttpRes} from "../../src/types/http";
 
 describe('Pug 렌더링 + jQuery DOM 테스트', () => {
     const maxAlarmCnt = 10

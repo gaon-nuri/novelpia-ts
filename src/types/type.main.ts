@@ -1,3 +1,5 @@
+import {HttpRes, Res} from "@type/http";
+
 type HttpEpResFn = (
     type: string,
     url: string,
@@ -22,18 +24,6 @@ type HttpStrFn = (
     url: string,
     data: {}
 ) => Promise<string>;
-
-interface Res {
-    errmsg: string,
-    status: number | string
-}
-
-interface HttpRes extends Res {
-    result: {
-        cnt: number
-    },
-    status: string
-}
 
 interface EpDownCheckRes extends Res {
     code: string,
@@ -70,7 +60,6 @@ export type {
     HttpFn,
     HttpFnWithDataType,
     HttpStrFn,
-    HttpRes,
     ToggleStateCbs,
     UserData
 };
