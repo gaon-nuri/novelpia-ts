@@ -5,11 +5,11 @@ import type {
     EpDownCheckRes,
     HttpEpResFn,
     HttpFn,
-    HttpRes,
     HttpStrFn,
     ToggleStateCbs,
     UserData
 } from "@type/type.main";
+import {HttpRes} from "@type/http";
 
 async function getAlarmCnt(
     user: UserData,

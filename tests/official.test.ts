@@ -15,11 +15,11 @@ import type {
     AlarmDelCbs,
     HttpEpResFn,
     HttpFn,
-    HttpRes,
     HttpStrFn,
     ToggleStateCbs,
     UserData
 } from "@type/type.main"
+import {HttpRes} from "@type/http";
 import {getRandInt} from "@utils/utils";
 import {Mock, mockFn, stubFn} from "./test_lib";
 
