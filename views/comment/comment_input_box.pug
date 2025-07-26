@@ -1,0 +1,47 @@
+- viewer_dir = "img/new/viewer"
+- names = ["target", "comment_img", "content_no", "comment_no", "comment_re_no"]
+
+.emoticon_list
+    .emoticon_nav
+        span.nav-menu.favorite_box
+            img(
+                src="/img/new/viewer/favorites_0.png"
+                alt="즐겨찾기 버튼"
+            )
+    .item_wrapper
+        span.emoticon_group_list
+        span.nav-menu.gacha_link
+            img(
+                src="/img/new/viewer/emoticon_fork.png"
+                alt="노벨티콘 뽑기 페이지 이동"
+            )
+        span.nav-menu.sort_btn(onclick="")
+            img(
+                src="/img/new/viewer/emoticon_setting.png"
+                alt="노벨티콘 세팅하기"
+            )
+    .nav-menu.openstore_link(style="cursor:pointer;" onclick="")
+        img(
+            src="/img/new/viewer/emoticon_shop.png"
+            alt="노벨티콘 스토어가기"
+        )
+|
+.comment_input_wrap
+    div
+        textarea.form-control(
+            rows="3"
+            placeholder="댓글을 입력해 보세요."
+            name="comment_msg"
+            style={
+                "-webkit-touch-callout": "text",
+                "-webkit-user-select": "text",
+                "user-select": "text",
+                "background-color": "#FFF"
+            }
+        )
+        each name_val in names
+            input(type="hidden" name=name_val)
+    div
+        button.btn.btn-dark.set_commit_comment_btn
+            i.icon.ion-edit
+            |  댓글입력
