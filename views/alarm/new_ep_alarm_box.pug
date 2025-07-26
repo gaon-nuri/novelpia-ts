@@ -1,0 +1,27 @@
+//- Parameters
+//- novelNo, novelTitle, epTitle, alarmNo
+
+.alarm_box.alarm_511768571(style="position:relative;")
+    table
+        tbody
+            tr
+                td(style={"vertical-align": "top", "width": "45px"})
+                    img(src="/img/new/menu/alarm.png" style="height:50px;")
+                td
+                    div(style="width: calc(100% - 35px)")
+                        a(onclick="$('.loads').show();"
+                            href=`/viewer/${novelNo}`)=novelTitle
+                    div(style={
+                        "background-color": "#f5f5f5",
+                        "margin": "5px 0px",
+                        "padding": "10px",
+                        "border-radius": "5px",
+                        "width": "calc(100% - 40px)"
+                    })=`${epTitle} : 회차가 등록되었습니다!`
+                    font(style="font-size:12px;") 10시간전
+                    .m_del_btn(style={top: "10px", right: "10px"})
+                        i.icon.ion-trash-b(
+                            onclick=`if(confirm('정말 이력을 삭제하시겠습니까?')) {
+                                alarm_info_del('${alarmNo}');
+                            }`
+                        )
