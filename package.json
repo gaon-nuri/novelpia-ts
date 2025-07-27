@@ -1,19 +1,22 @@
 {
-  "name": "novelpia",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "test": "jest"
-  },
-  "dependencies": {
-    "pug": "^3.0.3"
-  },
-  "devDependencies": {
-    "@types/pug": "^2.0.10",
-    "ts-jest": "^29.4.0",
-    "typescript": "^5.5.3"
-  },
-  "private": true
+    "name": "novelpia",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "test": "jest"
+    },
+    "dependencies": {
+        "pug": "^3.0.3"
+    },
+    "devDependencies": {
+        "@types/jsdom": "^21.1.7",
+        "@types/pug": "^2.0.10",
+        "jest-environment-jsdom": "^30.0.4",
+        "jsdom": "^26.1.0",
+        "ts-jest": "^29.4.0",
+        "typescript": "^5.5.3"
+    },
+    "private": true
 }
