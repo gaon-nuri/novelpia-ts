@@ -8,10 +8,12 @@
         "test": "jest"
     },
     "dependencies": {
-        "pug": "^3.0.3"
+        "pug": "^3.0.3",
+        "jquery": "^3.7.1"
     },
     "devDependencies": {
         "@types/jsdom": "^21.1.7",
+        "@types/jquery": "^3.5.32",
         "@types/pug": "^2.0.10",
         "jest-environment-jsdom": "^30.0.4",
         "jsdom": "^26.1.0",
